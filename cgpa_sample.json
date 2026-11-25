@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "curriculum": {
+    "semesters": [
+      "1-1",
+      "1-2"
+    ],
+    "courses": [
+      {
+        "code": "MAT 101",
+        "name": "Mathematics",
+        "credits": 3,
+        "type": "Theory",
+        "semester": 1
+      },
+      {
+        "code": "PHY 102",
+        "name": "Physics Lab",
+        "credits": 1.5,
+        "type": "Lab / Sessional",
+        "semester": 1
+      },
+      {
+        "code": "ENG 201",
+        "name": "English",
+        "credits": 3,
+        "type": "Theory",
+        "semester": 2
+      }
+    ]
+  },
+  "values": {
+    "MAT 101": 4,
+    "PHY 102": 9
+  },
+  "exams": [
+    {
+      "code": "MAT 101",
+      "type": "improvement",
+      "sem": 1,
+      "grade": 8
+    }
+  ]
+}

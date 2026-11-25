@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>CGPA Studio</title>
+    <meta content="Plan your academic results, track GPA and CGPA, and explore repeat examination options. Your grades stay in your browser." name="description"/>
+    <meta content="light dark" name="color-scheme"/>
+    <link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
+    <link href="assets/css/base.css" rel="stylesheet"/>
+    <link href="assets/css/analytics-guide.css" rel="stylesheet"/>
+    <link href="assets/css/accessibility.css" rel="stylesheet"/>
+    <link href="assets/css/dashboard.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbrand">
+        <button aria-controls="sidebar" aria-label="Toggle sidebar" class="iconBtn" id="toggleSide" title="Toggle sidebar"><svg fill="none" height="20" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24" width="20"><rect height="16" rx="2" width="18" x="3" y="4"></rect><path d="M9 4v16"></path></svg></button>
+        <b>CGPA Studio</b>
+      </div>
+      <div class="topActions">
+        <button aria-label="Toggle dark mode" class="iconBtn" id="themeToggle" title="Toggle dark mode"></button>
+        <span id="saveStatus" hidden>Local storage</span>
+      </div>
+    </div>
+    <aside class="sidebar" id="sidebar">
+      <nav aria-label="Main navigation" class="sideNav" id="tabs"></nav>
+    </aside>
+    <button aria-label="Close navigation" class="sidebarScrim" id="sidebarScrim" tabindex="-1"></button>
+    <main>
+      <header>
+        <h1 id="pageHeading">Overview</h1>
+        <div class="progressline" id="headerProgress">
+          <span id="progressLabel"></span>
+          <div class="progressTrack">
+            <div id="progressFill"></div>
+          </div>
+        </div>
+      </header>
+      <div class="metrics" id="globalMetrics">
+        <div class="metric primary">
+          <small>CGPA</small>
+          <strong id="overall">—</strong>
+          <small id="overallSub"></small>
+        </div>
+        <div class="metric">
+          <small title="Failed credits included at zero">CGPA incl. F</small>
+          <strong id="raw">—</strong>
+          <small>All graded credits</small>
+        </div>
+        <div class="metric">
+          <small>Original CGPA</small>
+          <strong id="original">—</strong>
+          <small>Before repeat exams</small>
+        </div>
+        <div class="metric" id="semesterMetric">
+          <small id="semLabel">Semester GPA</small>
+          <strong id="sgpa">—</strong>
+          <small id="sgpaSub"></small>
+        </div>
+      </div>
+      <div id="semesterView">
+        <section class="panel">
+          <div class="head">
+            <div>
+              <h2 hidden="" id="title"></h2>
+              <p id="subtitle"></p>
+            </div>
+            <div class="actions">
+              <select id="bulk"></select>
+            </div>
+          </div>
+          <div id="courses"></div>
+        </section>
+        <section class="panel">
+          <div class="head">
+            <div>
+              <h2>Repeat examinations</h2>
+              <p id="repeatSummary"></p>
+            </div>
+            <button id="addExam">+ Add exam</button>
+          </div>
+          <div hidden="" id="examForm">
+            <div class="formrow">
+              <label>Exam type<select id="examType"><option value="clearance">Clearance</option><option value="carry">Carry</option><option value="improvement">Improvement</option></select></label>
+              <label>Eligible course<select id="examCourse"></select></label>
+              <label>Result<select id="examGrade"></select></label>
+              <button class="primaryBtn" id="commitExam">Add result</button>
+              <button id="cancelExam">Cancel</button>
+            </div>
+            <p id="examHelp"></p>
+          </div>
+          <div id="exams"></div>
+        </section>
+      </div>
+      <div hidden="" id="statsView">
+        <section class="panel statPanel">
+          <div class="statHead">
+            <div>
+              <h2>Academic progression</h2>
+              <p>Based on your entered grades</p>
+            </div>
+            <label class="statScale">Scale <select aria-label="Chart vertical scale" id="trendScale"><option value="full">0–4</option><option value="focus">Focus on results</option></select></label>
+          </div>
+          <div class="statHighlights" id="statHighlights"></div>
+          <div class="trendLegend" id="trendLegend"></div>
+          <div class="trendScroll" id="chart"></div>
+          <div class="trendReadout" id="trendReadout"></div>
+          <div class="statLower" id="statLower">
+            <div id="distribution"></div>
+            <div id="creditProgress"></div>
+          </div>
+          <div id="creditAudit"></div>
+        </section>
+        <section class="panel">
+          <h2>Course explorer</h2>
+          <div class="formrow">
+            <input id="search" placeholder="Search course name or code" type="search"/>
+            <details class="filterMenu" id="filterSem">
+              <summary>All semesters</summary>
+              <div class="filterBody"></div>
+            </details>
+            <details class="filterMenu" id="filterGrade">
+              <summary>All grades</summary>
+              <div class="filterBody"></div>
+            </details>
+            <details class="filterMenu" id="filterStatus">
+              <summary>All statuses</summary>
+              <div class="filterBody"></div>
+            </details>
+            <select id="filterType">
+              <option value="">All course types</option>
+              <option>Theory</option>
+              <option>Lab / Sessional</option>
+              <option>Thesis</option>
+            </select>
+            <select id="sort">
+              <option value="sem">Semester order</option>
+              <option value="asc">Grade: low to high</option>
+              <option value="desc">Grade: high to low</option>
+              <option value="nameAsc">Name A–Z</option>
+              <option value="nameDesc">Name Z–A</option>
+              <option value="credit">Credits: high to low</option>
+            </select>
+            <button id="clearFilters">Clear filters</button>
+          </div>
+          <div class="tablewrap" id="courseTable"></div>
+        </section>
+      </div>
+      <div hidden="" id="targetView">
+        <section class="panel">
+          <div class="formrow">
+            <label>Desired CGPA<input id="target" max="4" min="2.2" step=".001" type="number" value="3.500"/></label>
+            <label>Start semester<select id="start"></select></label>
+            <label>Improvement limit<select id="allowImprove"><option value="yes">Allow improvement</option><option value="no">No new improvement</option></select></label>
+            <button class="primaryBtn" id="calculate">Calculate plan</button>
+          </div>
+          <details class="planSettings">
+            <summary>Grade ceilings &amp; limits</summary>
+            <p>Adjust realistic maximum grades by course type. Entered grades are never changed. Improvements always cap at A−; the original continuous assessment and midterm contribute 50% of the final result.</p>
+            <div class="formrow">
+              <label>Theory ceiling<select id="capTheory"></select></label>
+              <label>Lab / sessional ceiling<select id="capLab"></select></label>
+              <label>Thesis ceiling<select id="capThesis"></select></label>
+              <label>Max new improvements<select id="maxNew"><option value="8">Any remaining</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+            </div>
+          </details>
+          <div id="plan"></div>
+        </section>
+      </div>
+      <section hidden id="overviewView" aria-label="Academic overview">
+        <div id="overviewProgress"></div>
+        <div class="overviewColumns">
+          <section aria-labelledby="semesterProgressHeading" class="overviewSection">
+            <div class="overviewHeading"><h2 id="semesterProgressHeading">Semester progress</h2><button class="quietLink" data-overview-view="stats">Statistics</button></div>
+            <div id="overviewTerms"></div>
+          </section>
+          <section aria-labelledby="nextStepsHeading" class="overviewSection">
+            <div class="overviewHeading"><h2 id="nextStepsHeading">Next steps</h2></div>
+            <div id="overviewActions"></div>
+          </section>
+        </div>
+        <div id="warnings"></div>
+        <details class="overviewResults">
+          <summary>Full semester results</summary>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Semester</th>
+                <th>Passed / regular credits¹</th>
+                <th>IUMS GPA</th>
+                <th>IUMS CGPA</th>
+                <th>CGPA incl. F</th>
+                <th>Original CGPA</th>
+                <th>Outstanding F</th>
+              </tr>
+            </thead>
+            <tbody id="summary"></tbody>
+          </table>
+        </div>
+        <p class="foot">¹ Semester passed credits include successful repeats held in that semester, even if the course belongs to an earlier semester. CGPA counts each course once.</p>
+        </details>
+      </section>
+      <section class="guide" hidden="" id="rulesView">
+        <div class="guideIntro">
+          <h2>Student guide</h2>
+          <p>How to enter results, interpret your averages and plan your degree.</p>
+          <p class="guideNote">Independent planning tool · Not an official IUMS result or registration service.</p>
+          <nav aria-label="Guide sections" class="guideNav">
+            <a href="#guide-start">Getting started</a>
+            <a href="#guide-calc">Calculations</a>
+            <a href="#guide-grades">Grading</a>
+            <a href="#guide-exams">Repeat exams</a>
+            <a href="#guide-plan">Target planner</a>
+            <a href="#guide-data">JSON &amp; backups</a>
+            <a href="#guide-sources">Sources</a>
+          </nav>
+        </div>
+        <article class="guideSection" id="guide-start">
+          <h2>01 / Getting started</h2>
+          <ol>
+            <li>Use Overview to see semester completion and open the next unfinished semester. Open Settings and check the curriculum against your own registration and syllabus. Add, edit or remove courses; choose Theory, Lab / Sessional or Thesis, then set credits and semester.</li>
+            <li>On each semester page, enter the <strong>original regular examination grade</strong> with the slider. Leave unpublished results unset. F is a real grade, not an empty value.</li>
+            <li>For a clearance, carry or improvement, open the semester in which that examination took place and choose Add exam. Enter its actual result, including F if applicable. Do not overwrite the original grade.</li>
+            <li>Use Overview for historical semester results, Statistics for performance and course filters, and Target CGPA to explore future grades. Click a course name for its details.</li>
+            <li>Save a JSON backup from Settings before changing the curriculum or replacing the HTML file.</li>
+          </ol>
+          <p>The default curriculum is editable. Electives and credits can vary by intake and department. The grading and exam policy is fixed to the modeled four-year AUST rules, even when you change the course list. Both default thesis parts are 3 credits by configuration; verify against your registration.</p>
+        </article>
+        <article class="guideSection" id="guide-calc">
+          <h2>02 / How averages are calculated</h2>
+          <div class="formula">GPA or CGPA = Σ (course credits × grade point) ÷ Σ included credits</div>
+          <dl class="guideDefinitions">
+            <dt>Semester GPA (IUMS-style)</dt>
+            <dd>Uses passing grades from that term's regular and valid repeat examinations, with a course counted once in that term. The same course may contribute in a later term when repeated.</dd>
+            <dt>IUMS-style cumulative CGPA</dt>
+            <dd>Uses the most recent valid result for each course up to the selected semester; unresolved F credits are excluded. Improved grades replace previous grades, rather than adding extra degree credits.</dd>
+            <dt>CGPA including F</dt>
+            <dd>Uses the same latest results but includes attempted failed courses at grade point zero.</dd>
+            <dt>Original CGPA</dt>
+            <dd>Uses only original regular grades, including F, and ignores every repeat result.</dd>
+          </dl>
+          <p>Unset courses do not enter any average. Historical semester GPAs stay as they were at the time; later examinations affect cumulative results from their own semester onward. All displayed averages use three decimal places with ties rounded to even. The IUMS-style calculation was modeled from sample grade sheets, not an official published IUMS algorithm.</p>
+          <div class="guideExample">
+            <strong>Example</strong>
+            <p>Two 3-credit courses with B (3.00) and F give IUMS-style GPA 3.000 and GPA including F 1.500. A later carry result of C (2.25) raises cumulative CGPA to 2.625, while original CGPA remains 1.500.</p>
+          </div>
+        </article>
+        <article class="guideSection" id="guide-grades">
+          <h2>03 / Grading scale</h2>
+          <div class="tablewrap">
+            <table class="guideTable">
+              <thead>
+                <tr>
+                  <th>Marks (%)</th>
+                  <th>Regular</th>
+                  <th>GP</th>
+                  <th>Clearance / carry</th>
+                  <th>Improvement</th>
+                  <th>JSON index</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>80–100</td>
+                  <td>A+</td>
+                  <td>4.00</td>
+                  <td>B</td>
+                  <td>A−</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td>75–&lt;80</td>
+                  <td>A</td>
+                  <td>3.75</td>
+                  <td>B</td>
+                  <td>A−</td>
+                  <td>9</td>
+                </tr>
+                <tr>
+                  <td>70–&lt;75</td>
+                  <td>A−</td>
+                  <td>3.50</td>
+                  <td>B</td>
+                  <td>A−</td>
+                  <td>8</td>
+                </tr>
+                <tr>
+                  <td>65–&lt;70</td>
+                  <td>B+</td>
+                  <td>3.25</td>
+                  <td>B</td>
+                  <td>B+</td>
+                  <td>7</td>
+                </tr>
+                <tr>
+                  <td>60–&lt;65</td>
+                  <td>B</td>
+                  <td>3.00</td>
+                  <td>B</td>
+                  <td>B</td>
+                  <td>6</td>
+                </tr>
+                <tr>
+                  <td>55–&lt;60</td>
+                  <td>B−</td>
+                  <td>2.75</td>
+                  <td>B−</td>
+                  <td>B−</td>
+                  <td>5</td>
+                </tr>
+                <tr>
+                  <td>50–&lt;55</td>
+                  <td>C+</td>
+                  <td>2.50</td>
+                  <td>C+</td>
+                  <td>C+</td>
+                  <td>4</td>
+                </tr>
+                <tr>
+                  <td>45–&lt;50</td>
+                  <td>C</td>
+                  <td>2.25</td>
+                  <td>C</td>
+                  <td>C</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>40–&lt;45</td>
+                  <td>D</td>
+                  <td>2.00</td>
+                  <td>D</td>
+                  <td>D</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>Below 40</td>
+                  <td>F</td>
+                  <td>0.00</td>
+                  <td>F</td>
+                  <td>F</td>
+                  <td>1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Percentages refer to the total course mark, not just the exam paper. For theory, the current Controller page lists 10% participation, 20% quizzes/assignments, 20% midterm and 50% final examination. The repeat grade ceiling is not a guaranteed result. <a href="#guide-sources">Sources 1–3</a>.</p>
+        </article>
+        <article class="guideSection" id="guide-exams">
+          <h2>04 / Repeat examinations</h2>
+          <div class="tablewrap">
+            <table class="guideTable">
+              <thead>
+                <tr>
+                  <th>Rule</th>
+                  <th>Clearance</th>
+                  <th>Carry</th>
+                  <th>Improvement</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Course type</td>
+                  <td>Theory</td>
+                  <td>Theory</td>
+                  <td>3-credit theory</td>
+                </tr>
+                <tr>
+                  <td>Eligibility</td>
+                  <td>Original F</td>
+                  <td>Unresolved F</td>
+                  <td>Original D–B+; no prior repeat</td>
+                </tr>
+                <tr>
+                  <td>Exam semester</td>
+                  <td>Original semester</td>
+                  <td>Later semester</td>
+                  <td>Later semester in planner*</td>
+                </tr>
+                <tr>
+                  <td>Highest grade</td>
+                  <td>B / 3.00</td>
+                  <td>B / 3.00</td>
+                  <td>A− / 3.50</td>
+                </tr>
+                <tr>
+                  <td>Attempts per course</td>
+                  <td>One clearance</td>
+                  <td>Until passed, within limits</td>
+                  <td>One improvement</td>
+                </tr>
+                <tr>
+                  <td>Per semester</td>
+                  <td colspan="2">Two combined (modeled limit)</td>
+                  <td>Two</td>
+                </tr>
+                <tr>
+                  <td>Degree limit</td>
+                  <td colspan="2">No separate lifetime cap modeled</td>
+                  <td>Eight (four-year model)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Labs, software development sessionals and thesis are ineligible for all three repeat types in this app. Failed sessionals need separate departmental resolution. A failed improvement can produce an unresolved F eligible for carry in a later term; a lower improvement result replaces the old result. Invalid records are displayed but excluded from calculations.</p>
+          <p>*Historical same-semester improvement records are accepted for compatibility with existing grade sheets. The planner uses later semesters only. A single course cannot have two repeat records in the same term. The 3-credit improvement restriction, one attempt per course and combined two-recovery limit are configured planning assumptions; confirm current applicability with the Controller.</p>
+          <h3>Promotion and graduation</h3>
+          <p>Published AUST policy permits at most two new failed theory courses and four cumulative outstanding theory failures for promotion, subject to other conditions. From 1-2 onward, CGPA must reach 2.200 for promotion. A failed sessional may block promotion. Graduation requires completing degree requirements and CGPA at least 2.200. The official four-year improvement limit is eight courses; for five-year programs it is ten, which this version does not model. The Controller also restricts improvements after the final year with carry courses outstanding. This app warns about some promotion conditions but cannot verify attendance, registration, fees, expulsions or real examination schedules.</p>
+          <p>Apply through IUMS within announced deadlines and consult the current exam notices before registering. <a href="#guide-sources">Sources 1–3, 6–8</a>.</p>
+        </article>
+        <article class="guideSection" id="guide-plan">
+          <h2>05 / Statistics and target planning</h2>
+          <p>Statistics shows semester GPA, cumulative performance, grade distribution and passed credits. Select a semester on the chart or use the dropdown to inspect its values. The range control changes only the visual scale. Filter Course Explorer by several grades, semesters or exam statuses, or by course type and search term. Status filters match any selected status; separate filter groups are combined.</p>
+          <p>Enter your desired graduation CGPA (2.200–4.000), first available exam semester, and expected maximum grades for theory, labs and thesis. Choose whether to allow new improvements and their limit. The planner keeps entered grades fixed, estimates the maximum with and without new improvements, and suggests a set of grades and repeat exams under the modeled limits. It aims to minimize new improvements before reducing regular targets.</p>
+          <p>All unentered courses are assumed to pass for graduation projections. Recovery exams are modeled at B and improvements at A−. Actual achievable grades depend on retained assessment marks, exam performance, registration and schedules. Resolve invalid repeat records first; failed non-theory courses may need manual academic resolution. Plans do not change your saved results. A projected CGPA is not an official guarantee.</p>
+        </article>
+        <article class="guideSection" id="guide-data">
+          <h2>06 / Custom curriculum, JSON and privacy</h2>
+          <p>In Settings, add or edit course codes, names, credits, types and semester assignments. Up to 24 semester labels and 1,000 courses are supported. Labels must be unique (1–24 characters); codes must be unique (1–40 characters), using letters, digits, spaces, hyphens, slashes, underscores or periods. Names may be up to 180 characters; credits must be numeric, greater than zero and at most 60. Remove only the final empty semester.</p>
+          <p>Import a curriculum-only file to replace the course list; optionally keep matching course codes and semester labels. A full backup replaces curriculum and grades together. A legacy results-only import merges matching grades and replaces repeat records if <code>exams</code> is included. Unknown courses or malformed grade records may be skipped; review results after importing.</p>
+          <pre class="guideCode">{
+  "schemaVersion": 2,
+  "curriculum": {
+    "semesters": ["1-1", "1-2"],
+    "courses": [
+      {"code": "MAT 101", "name": "Mathematics",
+       "credits": 3, "type": "Theory", "semester": 1}
+    ]
+  },
+  "values": {"MAT 101": 4},
+  "exams": [
+    {"code": "MAT 101", "type": "improvement",
+     "sem": 1, "grade": 8}
+  ]
+}</pre>
+          <p>Curriculum <code>semester</code> starts at 1; exam <code>sem</code> starts at 0 for backward compatibility. Exact course types: <code>Theory</code>, <code>Lab / Sessional</code>, <code>Thesis</code>. Repeat types: <code>clearance</code>, <code>carry</code>, <code>improvement</code>. Values and exam grades use the indices in the grading table; 0 means unset and is not a repeat result. In this example, C+ in term 1 is improved to A− in term 2. For curriculum only, omit values and exams. Optional backup fields (page, target, start, allowImprove) preserve calculator state.</p>
+          <button id="guideSample" type="button">Download sample JSON</button>
+          <p>Data is saved locally in your browser, not uploaded or linked to IUMS. Keep the same browser and file location, and export backups regularly; browser storage may be cleared. Clear semester grades or all grades and repeats from Settings. Clearing a semester leaves repeat records for review. No official credentials are required. External source links require internet.</p>
+        </article>
+        <article class="guideSection" id="guide-sources">
+          <h2>07 / Official sources</h2>
+          <p>Links checked 25 November 2026. The Controller's current page takes precedence over the older general grading page where the published limits or assessment weights conflict.</p>
+          <ol class="sourceList">
+            <li><a href="https://aust.edu/administration/offices/office_of_the_controller_of_examinations" rel="noopener" target="_blank">Office of the Controller of Examinations</a><span>Primary reference: grade scale, exam caps, promotion, graduation and registration.</span></li>
+            <li><a href="https://www.aust.edu/academics/examincation_and_grading_system" rel="noopener" target="_blank">Examination &amp; Grading System</a><span>General exam framework; contains older improvement limits and assessment weights.</span></li>
+            <li><a href="https://admission.aust.edu/wp-content/uploads/2025/12/Spring-2025-Admission-Prospectus-05-12-2025.pdf" rel="noopener" target="_blank">Spring 2025 admission prospectus</a><span>University prospectus and academic regulations.</span></li>
+            <li><a href="https://www.aust.edu/cse/syllabus" rel="noopener" target="_blank">Department syllabus</a><span>Reference for the default curriculum; check your own intake and electives.</span></li>
+            <li><a href="https://www.aust.edu/cse/class_routine" rel="noopener" target="_blank">Department class routine</a><span>Semester courses and class information.</span></li>
+            <li><a href="https://www.aust.edu/notice/2619" rel="noopener" target="_blank">Carry / clearance / improvement notice (17 Nov 2024)</a><span>Official notice page; consult its attachment for detailed conditions.</span></li>
+            <li><a href="https://www.aust.edu/notice" rel="noopener" target="_blank">University notices</a> · <a href="https://www.aust.edu/notice/3482" rel="noopener" target="_blank">Example: revised Fall 2025 repeat schedule</a><span>Check current application dates and exam timetable.</span></li>
+            <li><a href="https://iums.aust.edu/ums-web/iums/" rel="noopener" target="_blank">IUMS</a><span>Official portal for results, registration and applications.</span></li>
+          </ol>
+          <p>Some linked notices and curriculum PDFs are embedded on university pages and could not be independently inspected. Verify department-specific credits and all eligibility rules with AUST. This project is not affiliated with the university.</p>
+        </article>
+        
+      </section>
+      <div hidden="" id="settingsView">
+        <section class="panel">
+          <div class="head">
+            <div>
+              <h2>Curriculum</h2>
+              <p id="curriculumSummary"></p>
+            </div>
+            <button class="primaryBtn" id="addCourse">Add course</button>
+          </div>
+          <div class="formrow">
+            <input id="editSearch" placeholder="Search courses" type="search"/>
+            <select aria-label="Filter semester" id="editFilter"></select>
+            <button id="exportCurriculum">Export curriculum</button>
+            <button id="importCurriculum">Import curriculum</button>
+          </div>
+          <div class="tablewrap" id="editTable"></div>
+        </section>
+        <section class="panel">
+          <h2>Semesters</h2>
+          <div class="formrow">
+            <label>Semester<select id="manageSem"></select></label>
+            <label>Label<input id="semName" maxlength="24" placeholder="e.g. 1-1"/></label>
+            <button id="renameSem">Rename</button>
+            <button id="appendSem">Add semester</button>
+            <button id="removeSem">Remove last empty semester</button>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>Data &amp; backups</h2>
+          <p class="muted" id="storageInfo"></p>
+          <div class="formrow">
+            <button id="backupOut">Export full backup</button>
+            <button id="backupIn">Import results / backup</button>
+            <button id="sampleJSON">Sample JSON</button>
+          </div>
+          <details>
+            <summary>JSON format</summary>
+            <p>Use <code>curriculum</code> for semester labels and courses. Course codes must be unique; semester numbers in curriculum files start at 1. Types: Theory, Lab / Sessional, Thesis. Credits must be positive. A full backup also contains <code>values</code> and <code>exams</code>.</p>
+            <p>Grade indices: 0 unset, 1 F, 2 D, 3 C, 4 C+, 5 B−, 6 B, 7 B+, 8 A−, 9 A, 10 A+. Repeat exam <code>sem</code> is zero-based (legacy compatibility). Importing a curriculum replaces the course list; you can choose whether to preserve matching course codes. Full backup imports replace the curriculum and results together. Legacy results-only imports merge grades and replace repeat records if supplied.</p>
+            <pre id="jsonExample"></pre>
+          </details>
+        </section>
+        <section class="panel dangerZone">
+          <h2>Clear data</h2>
+          <p class="muted">Export a backup before clearing records. The curriculum is retained.</p>
+          <div class="formrow">
+            <label>Semester<select id="clearSem"></select></label>
+            <button id="clearTerm">Clear semester grades</button>
+            <button id="resetAll">Clear all grades and exams</button>
+          </div>
+        </section>
+      </div>
+      <dialog aria-labelledby="editTitle" id="editDialog">
+        <div class="detailHead">
+          <h2 id="editTitle">Course</h2>
+          <button aria-label="Close" id="closeEdit">×</button>
+        </div>
+        <form class="detailBody" id="editForm">
+          <div class="editFields">
+            <label>Course code<input id="editCode" maxlength="40" required=""/></label>
+            <label>Course name<input id="editName" maxlength="180" required=""/></label>
+            <label>Credits<input id="editCredit" max="60" min="0.01" required="" step="any" type="number"/></label>
+            <label>Type<select id="editType"><option>Theory</option><option>Lab / Sessional</option><option>Thesis</option></select></label>
+            <label>Semester<select id="editSem"></select></label>
+          </div>
+          <p class="bad" id="editError" role="alert"></p>
+          <div class="formrow">
+            <button class="primaryBtn" type="submit">Save course</button>
+            <button class="bad" id="deleteCourse" type="button">Delete course</button>
+          </div>
+        </form>
+      </dialog>
+      <footer class="creator siteFooter">Made with love <span aria-hidden="true">♡</span> by <strong>Tahmid Khan</strong><br/><small>CSE · 20220204086</small><nav aria-label="Creator links" class="creatorLinks"><a aria-label="GitHub" href="https://github.com/tahmidkhanshuvo" rel="noopener noreferrer" target="_blank" title="GitHub"><svg aria-hidden="true" fill="currentColor" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a><a aria-label="LinkedIn" href="https://www.linkedin.com/in/tahmid-khan-shuvo/" rel="noopener noreferrer" target="_blank" title="LinkedIn"><svg aria-hidden="true" fill="currentColor" viewBox="0 0 448 512"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"></path></svg></a><a aria-label="Portfolio" href="https://www.tahmidkhan.com.bd/" rel="noopener noreferrer" target="_blank" title="Portfolio"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg></a><a aria-label="Email" href="mailto:hi@tahmidkhan.com.bd" title="Email"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewBox="0 0 24 24"><rect height="14" rx="2" width="18" x="3" y="5"></rect><path d="m3 7 9 6 9-6"></path></svg></a></nav><small class="footerMeta">Independent student project · <a href="https://opensource.org/license/mit" target="_blank" rel="noopener noreferrer">MIT License</a></small></footer>
+    </main>
+    <dialog aria-labelledby="detailTitle" id="courseDialog">
+      <div class="detailHead">
+        <div>
+          <div class="code" id="detailCode"></div>
+          <h2 id="detailTitle"></h2>
+          <div class="muted" id="detailMeta"></div>
+        </div>
+        <button aria-label="Close course details" class="iconBtn" id="closeDetail" title="Close"><svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" viewBox="0 0 24 24" width="18"><path d="m6 6 12 12M18 6 6 18"></path></svg></button>
+      </div>
+      <div class="detailBody" id="detailBody"></div>
+      <div class="detailFooter">
+        <button id="gotoCourse">Go to semester</button>
+      </div>
+    </dialog>
+    <script defer src="assets/js/state.js"></script>
+    <script defer src="assets/js/engine.js"></script>
+    <script defer src="assets/js/course-details.js"></script>
+    <script defer src="assets/js/semester.js"></script>
+    <script defer src="assets/js/overview.js"></script>
+    <script defer src="assets/js/statistics.js"></script>
+    <script defer src="assets/js/planner.js"></script>
+    <script defer src="assets/js/navigation.js"></script>
+    <script defer src="assets/js/filters.js"></script>
+    <script defer src="assets/js/planner-controls.js"></script>
+    <script defer src="assets/js/settings.js"></script>
+    <script defer src="assets/js/bootstrap.js"></script>
+  </body>
+</html>

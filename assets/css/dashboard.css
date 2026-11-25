@@ -1,0 +1,51 @@
+/* Dashboard, shared footer and view-specific metric visibility. */
+main { min-height: calc(100dvh - var(--bar)); display:flex; flex-direction:column; padding-bottom:24px; }
+#globalMetrics.threeMetrics { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.overviewHero { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:24px; padding:4px 0 25px; border-bottom:1px solid var(--line); }
+.overviewHeading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
+.overviewHeading h2 { margin:0; font-size:16px; font-weight:650; letter-spacing:-.2px; }
+.completionPercent { font-size:23px; font-variant-numeric:tabular-nums; color:var(--accent); letter-spacing:-.6px; }
+.degreeTrack { height:9px; border-radius:99px; background:var(--track); overflow:hidden; }
+.degreeTrack>div { height:100%; background:var(--accent); border-radius:99px; }
+.overviewMeta { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:9px; }
+.overviewMini { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:center; border-left:1px solid var(--line); padding-left:24px; }
+.overviewMini small,.termLabel small,.termGpa small,.overviewAction small { display:block; color:var(--muted); font-size:12px; }
+.overviewMini strong { font-size:24px; letter-spacing:-.6px; font-variant-numeric:tabular-nums; font-weight:650; }
+.overviewMini strong span { color:var(--muted); font-weight:400; font-size:13px; letter-spacing:0; }
+.overviewColumns { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:32px; margin:28px 0 22px; }
+.overviewSection { min-width:0; }
+.quietLink { padding:3px 0; border:none; background:none; color:var(--accent); font-size:12px; min-height:32px; }
+.overviewTerm,.overviewAction { border:0; border-bottom:1px solid var(--line); background:none; border-radius:0; width:100%; text-align:left; min-height:59px; padding:10px 0; }
+.overviewTerm { display:grid; grid-template-columns:minmax(95px,1fr) minmax(40px,1fr) 57px; align-items:center; gap:12px; }
+.overviewTerm:hover,.overviewAction:hover { background:var(--hover); }
+.termLabel b { font-size:15px; font-weight:650; }
+.termTrack { display:block; height:5px; background:var(--track); border-radius:99px; overflow:hidden; }
+.termTrack>span { display:block; height:100%; border-radius:99px; background:var(--accent); }
+.termGpa { text-align:right; font-variant-numeric:tabular-nums; }
+.termGpa b { font-size:15px; font-weight:650; }
+.overviewAction { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.overviewAction b { font-weight:600; font-size:14px; }
+.overviewAction svg { width:17px; height:17px; flex:none; color:var(--muted); }
+.overviewHint { font-size:11px; color:var(--muted); margin-top:12px; }
+.overviewResults { margin:10px 0 16px; padding:12px 0; border-top:1px solid var(--line); }
+.overviewResults>summary { color:var(--muted); font-size:13px; cursor:pointer; }
+.overviewResults .tablewrap { margin-top:14px; }
+.siteFooter { margin-top:auto; border-top:1px solid var(--line); padding:22px 0 6px; }
+.footerMeta { display:block; margin-top:7px; font-size:11px; color:var(--muted); }
+.footerMeta a { color:inherit; }
+#courseTable { scroll-margin-top:calc(var(--bar) + 12px); }
+@media(max-width:680px) {
+  .overviewHero { grid-template-columns:1fr; gap:16px; padding-bottom:20px; }
+  .overviewMini { border-left:0; padding:0; }
+  .overviewColumns { grid-template-columns:1fr; gap:24px; margin-top:22px; }
+  #globalMetrics.threeMetrics { grid-template-columns:repeat(3,minmax(0,1fr)); padding:13px 0; }
+  #globalMetrics.threeMetrics .metric { padding:0 9px; }
+  #globalMetrics.threeMetrics .metric:nth-child(3) { border-left:1px solid var(--line); }
+  #globalMetrics.threeMetrics .metric strong { font-size:22px; }
+  #globalMetrics.threeMetrics .metric small { font-size:10px; line-height:1.35; }
+  .overviewTerm { min-height:58px; }
+}
+@media(max-width:360px) { #globalMetrics.threeMetrics .metric strong { font-size:20px; } }
+
+/* Keep guide width constrained when it is a flex child of main. */
+main > .guide { width:100%; min-width:0; }

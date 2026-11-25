@@ -1,0 +1,399 @@
+/* v8: analytical views and reference guide */
+
+.statPanel {
+  padding: clamp(14px,2.4vw,26px);
+}
+
+.statHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.statHead p,.statLower p {
+  font-size: 12px;
+  margin: 4px 0 12px;
+}
+
+.statScale {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.statScale select {
+  font-size: 12px;
+}
+
+.statHighlights {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  margin: 16px 0 20px;
+  border-block: 1px solid var(--line);
+  padding: 15px 0;
+  gap: 14px;
+}
+
+.statHighlights>div {
+  min-width: 0;
+}
+
+.statHighlights>div+div {
+  border-left: 1px solid var(--line);
+  padding-left: 14px;
+}
+
+.statHighlights strong {
+  display: block;
+  font-size: clamp(20px,3vw,30px);
+  font-weight: 650;
+  letter-spacing: -.7px;
+  font-variant-numeric: tabular-nums;
+}
+
+.statHighlights span {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+}
+
+.trendLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.seriesToggle {
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  border: 0 !important;
+  background: transparent !important;
+  font-size: 11px !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seriesToggle span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.seriesToggle[aria-pressed=false] {
+  opacity: .45;
+  text-decoration: line-through;
+}
+
+.trendScroll {
+  overflow-x: auto;
+  max-width: 100%;
+  min-width: 0;
+  scrollbar-width: thin;
+}
+
+.trendSvg {
+  display: block;
+  max-width: none;
+}
+
+.trendHit {
+  cursor: pointer;
+}
+
+.chartEmpty {
+  height: 180px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  text-align: center;
+}
+
+.trendReadout {
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 0 18px;
+}
+
+.trendReadout label {
+  font-size: 11px;
+  color: var(--muted);
+  display: grid;
+  gap: 4px;
+}
+
+.trendReadout select {
+  font-size: 12px;
+}
+
+.readoutValues {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.readoutValues b {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  display: block;
+  font-weight: 650;
+}
+
+.readoutValues small {
+  font-size: 11px;
+}
+
+.statLower {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 32px;
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+
+.statLower h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.distRows {
+  display: grid;
+  gap: 7px;
+}
+
+.distRow {
+  display: grid;
+  grid-template-columns: 40px 1fr 24px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.distRow b {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 550;
+}
+
+.distTrack {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.distTrack>div {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.creditRow {
+  margin: 12px 0 18px;
+}
+
+.creditRow>div:first-child,.repeatBreakdown>div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.repeatBreakdown {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.repeatBreakdown b,.creditRow b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+#creditAudit {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.guide {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.guideIntro,.guideSection {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 85px;
+}
+
+.guideIntro {
+  padding-top: 0;
+}
+
+.guideIntro h2 {
+  font-size: 21px;
+}
+
+.guideNote {
+  font-size: 12px;
+}
+
+.guideNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 14px 0 4px;
+  font-size: 12px;
+}
+
+.guideSection h2 {
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+
+.guideSection p,.guideSection li,.guideDefinitions dd {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.guideSection p {
+  max-width: 82ch !important;
+}
+
+.guideSection ol {
+  padding-left: 22px;
+}
+
+.guideSection li {
+  padding: 3px 0;
+}
+
+.guideSection strong,.guideDefinitions dt {
+  color: var(--ink);
+}
+
+.guideDefinitions dt {
+  font-weight: 650;
+  margin-top: 13px;
+}
+
+.guideDefinitions dd {
+  margin: 4px 0 0;
+}
+
+.formula,.guideExample {
+  padding: 12px 15px;
+  background: var(--soft);
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.formula {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.guideExample p {
+  margin: 3px 0 !important;
+}
+
+.guideTable td,.guideTable th {
+  white-space: normal !important;
+  padding: 10px 8px;
+}
+
+.guideTable {
+  min-width: 480px;
+}
+
+.guideCode {
+  font-size: 12px;
+  white-space: pre;
+  overflow: auto;
+  max-width: 100%;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.sourceList a {
+  font-weight: 600;
+}
+
+.sourceList span {
+  display: block;
+  font-size: 12px;
+}
+
+.creator {
+  text-align: center;
+  padding: 28px 0 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.creator strong {
+  color: var(--ink);
+}
+
+.creator span {
+  color: var(--accent);
+}
+
+@media (max-width:600px) {
+  .statHighlights {
+    gap: 8px;
+  }
+  .statHighlights>div+div {
+    padding-left: 8px;
+  }
+  .statHighlights small {
+    font-size: 10px;
+  }
+  .statHighlights span {
+    font-size: 10px;
+  }
+  .trendReadout {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .trendReadout label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .readoutValues {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 8px;
+  }
+  .statLower {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .guideSection p,.guideSection li,.guideDefinitions dd {
+    font-size: 13px;
+  }
+  .statHead h2 {
+    font-size: 15px;
+  }
+  .statScale {
+    gap: 4px;
+  }
+  .statScale select {
+    padding: 5px;
+    font-size: 11px;
+  }
+}

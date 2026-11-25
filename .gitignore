@@ -1,0 +1,11 @@
+.vercel/
+.env*
+.DS_Store
+node_modules/
+*results*.json
+*backup*.json
+
+# Generated offline release and local editor files
+aust_cgpa_calculator.html
+__pycache__/
+.vscode/
